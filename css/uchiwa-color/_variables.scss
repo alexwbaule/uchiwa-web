@@ -1,0 +1,27 @@
+/* Colors */
+$primary-color: #ffffff !default;
+$secondary-color: #2C394A !default;
+$tertiary-color: #000000 !default;
+$quaternary-color: #F0F1F5 !default;
+$quinary-color: #5F97FB !default;
+$senary-color: #434344 !default;
+
+$critical-color: #EA5443 !default;
+$warning-color: #F9BA46 !default;
+$success-color: #43ac6a !default;
+$unknown-color: #9C9990 !default;
+
+$well-success-background-color: rgba($success-color, .1) !default;
+$well-warning-background-color: rgba($warning-color, .1) !default;
+$well-critical-background-color: rgba($critical-color, .1) !default;
+$well-unknown-background-color: rgba($unknown-color, .1) !default;
+
+/* Wells */
+$well-background-color: #FAFAFA !default;
+$well-success-border-left: 9px solid $success-color !default;
+$well-warning-border-left: 9px solid $warning-color !default;
+$well-critical-border-left: 9px solid $critical-color !default;
+$well-unknown-border-left: 9px solid $unknown-color !default;
+$well-default-border-left: 9px solid $secondary-color !default;
+$well-lead-text-color: $quaternary-color !default;
+$well-hover-background-color: #FFFFCC !default;
