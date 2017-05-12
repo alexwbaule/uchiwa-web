@@ -1,0 +1,40 @@
+.event-panel {
+  background-color: $primary-color;
+  font-weight: bold;
+  padding: 15px;
+}
+
+.event-panel .box {
+  border-radius: 4px;
+  margin: auto;
+  color: $empty-box-color;
+  height: 50px;
+  line-height: 50px;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.event-panel .box.critical {
+  background-color: $critical-color;
+}
+
+.event-panel .box.silenced {
+  background-color: $silenced-color;
+}
+.event-panel .box.empty {
+  background-color: $empty-color;
+  color: $empty-text-color;
+}
+
+.event-panel .box.unknown {
+  background-color: $unknown-color;
+}
+
+.event-panel .box.warning {
+  background-color: $warning-color;
+}
+
+.event-panel .count {
+  font-size: 26px;
+}
