@@ -586,6 +586,17 @@ controllerModule.controller('EventsController', ['Clients', 'Events', '$filter',
       Sensu.stop(timer);
     });
 
+    // Get metrics
+    var metrics = Sensu.updateMetrics();
+    $scope.$watch(function () { return Sensu.getMetrics(); }, function (result) {
+      if (angular.isObject(result)) {
+        $scope.metrics = result;
+      }
+    });
+    $scope.$on('$destroy', function() {
+      Sensu.stop(metrics);
+    });
+
     // Filters
     $scope.$watchGroup(['collection.search', 'filters.q', 'filters.dc', 'filters.check' , 'filters.status' , 'filters.silenced' , 'filters.clientsSilenced' , 'filters.occurrences'], function(newValues, oldValues) {
       updateFilters();

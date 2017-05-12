@@ -1293,6 +1293,40 @@ li.timestamp .relative-timestamp {
 .uchiwa-popover .count {
   font-size: 18px; }
 
+.event-panel {
+  background-color: #2C2C39;
+  font-weight: bold;
+  padding: 15px; }
+
+.event-panel .box {
+  border-radius: 4px;
+  margin: auto;
+  color: #fffddd;
+  height: 50px;
+  line-height: 50px;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center; }
+
+.event-panel .box.critical {
+  background-color: #EA5443; }
+
+.event-panel .box.silenced {
+  background-color: #3F283D; }
+
+.event-panel .box.empty {
+  background-color: #fafafa;
+  color: #d7d7d7; }
+
+.event-panel .box.unknown {
+  background-color: #9C9990; }
+
+.event-panel .box.warning {
+  background-color: #F9BA46; }
+
+.event-panel .count {
+  font-size: 26px; }
+
 /* Colors */
 /* Body, Sections and Headers */
 /* Breadcrumb */
