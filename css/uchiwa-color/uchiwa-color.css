@@ -48,6 +48,7 @@
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -108,7 +109,10 @@ hr {
   overflow-wrap: normal !important;
   text-overflow: ellipsis;
   word-wrap: normal;
-  white-space: pre-line; }
+  white-space: nowrap; }
+
+.normal-white-space {
+  white-space: normal !important; }
 
 .section-header {
   font-size: 23px;
@@ -194,6 +198,7 @@ pre.hljs .hljs-string {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -236,6 +241,7 @@ pre.hljs .hljs-string {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -270,6 +276,7 @@ pre.hljs .hljs-string {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -310,6 +317,7 @@ pre.hljs .hljs-string {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -372,6 +380,7 @@ pre.hljs .hljs-string {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -532,6 +541,7 @@ pre.hljs .hljs-string {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -552,7 +562,9 @@ pre.hljs .hljs-string {
   background-color: #FFFFFF;
   color: #4D4D4D;
   margin-top: 10px;
-  min-width: 200px; }
+  min-width: 200px;
+  max-height: 600px;
+  overflow-y: auto; }
 
 .dropdown-menu-item {
   padding: 8px 0 8px 8px;
@@ -584,6 +596,7 @@ pre.hljs .hljs-string {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -606,7 +619,7 @@ pre.hljs .hljs-string {
 
 .element-view .value {
   overflow-wrap: break-word;
-  white-space: pre-line; }
+  white-space: pre-wrap; }
 
 .element-view .value img {
   display: block;
@@ -675,6 +688,7 @@ pre.hljs .hljs-string {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -704,6 +718,7 @@ pre.hljs .hljs-string {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -728,6 +743,7 @@ pre.hljs .hljs-string {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -763,6 +779,7 @@ pre.hljs .hljs-string {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -786,6 +803,7 @@ div.jsoneditor-menu {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -809,6 +827,7 @@ div.jsoneditor-menu {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -843,6 +862,7 @@ li.timestamp .relative-timestamp {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -921,6 +941,30 @@ li.timestamp .relative-timestamp {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
+/* Madlibs */
+/* Modal */
+/* Nav */
+/* Navbar */
+/* Search */
+/* Sidebar */
+/* Panels */
+/* Tables */
+/* Timestamp */
+/* Wells */
+.theme-logo::before {
+  content: url("../../img/uchiwa-black.png"); }
+
+/* Colors */
+/* Body, Sections and Headers */
+/* Breadcrumb */
+/* Buttons */
+/* Code */
+/* Console */
+/* Dashboard */
+/* Dropdown */
+/* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -968,6 +1012,10 @@ li.timestamp .relative-timestamp {
   font-size: 20px;
   outline: none; }
 
+.madlibs option {
+  color: #000000;
+  background-color: #ffffff; }
+
 .madlibs .moment-picker:after, .madlibs .select:after {
   content: "\f078";
   font-family: "FontAwesome";
@@ -1010,6 +1058,7 @@ li.timestamp .relative-timestamp {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -1059,6 +1108,7 @@ li.timestamp .relative-timestamp {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -1107,6 +1157,7 @@ li.timestamp .relative-timestamp {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -1128,7 +1179,7 @@ li.timestamp .relative-timestamp {
   padding-top: 5px; }
 
 .navbar > .container-fluid > .navbar-header > .navbar-brand {
-  padding: 9px 15px;
+  padding: 4px 15px;
   margin-left: 0px; }
 
 .navbar .nav > li > a {
@@ -1158,6 +1209,7 @@ li.timestamp .relative-timestamp {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -1328,6 +1380,7 @@ li.timestamp .relative-timestamp {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -1362,6 +1415,7 @@ li.timestamp .relative-timestamp {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -1401,6 +1455,7 @@ li.timestamp .relative-timestamp {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -1525,6 +1580,7 @@ li.timestamp .relative-timestamp {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -1657,6 +1713,7 @@ li.timestamp .relative-timestamp {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
@@ -1709,6 +1766,7 @@ li.timestamp .relative-timestamp {
 /* Dashboard */
 /* Dropdown */
 /* Login */
+/* Logo */
 /* Madlibs */
 /* Modal */
 /* Nav */
