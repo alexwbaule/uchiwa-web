@@ -62,7 +62,11 @@ hr {
   overflow-wrap: normal !important;
   text-overflow: ellipsis;
   word-wrap: normal;
-  white-space: pre-line;
+  white-space: nowrap;
+}
+
+.normal-white-space {
+  white-space: normal !important;
 }
 
 .section-header {

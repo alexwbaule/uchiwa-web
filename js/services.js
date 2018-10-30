@@ -13,7 +13,9 @@ serviceModule.service('Aggregates', ['Helpers', 'Notification', '$q', '$resource
     var self = this;
     this.delete = function(id) {
       var attributes = Helpers.splitId(id);
-      return Aggregates.delete({name: attributes[1], dc: attributes[0]}).$promise;
+      var name = Helpers.escapeDot(attributes[1]);
+
+      return Aggregates.delete({name: name, dc: attributes[0]}).$promise;
     };
     this.deleteMultiple = function(filtered, selected) {
       return Helpers.deleteMultiple(self.delete, filtered, selected)
@@ -118,14 +120,16 @@ serviceModule.service('backendService', ['$http', '$interval', '$location', '$ro
 /**
 * Check
 */
-serviceModule.service('Check', ['Checks', 'Config', '$interval', 'Notification', '$resource',
-function(Checks, Config, $interval, Notification, $resource) {
+serviceModule.service('Check', ['Checks', 'Config', 'Helpers', '$interval', 'Notification', '$resource',
+function(Checks, Config, Helpers, $interval, Notification, $resource) {
   this.check = {};
   var Resource = $resource('checks/:name', {name: '@name'});
   var self = this;
   var timer;
 
   this.get = function(dc, name) {
+    name = Helpers.escapeDot(name);
+
     Resource.get({name: name, dc: dc})
     .$promise.then(function(data) {
       angular.copy(data, self.check);
@@ -165,6 +169,8 @@ function (Helpers, Notification, $q, $resource, Silenced) {
     {'publish': {method: 'POST'}}
   );
   this.issueCheckRequest = function(dc, name, subscribers) {
+    name = Helpers.escapeDot(name);
+
     var request = new Request({check: name, dc: dc, subscribers: subscribers});
     return request.$publish();
   };
@@ -222,7 +228,9 @@ function (Events, $filter, Helpers, $location, Notification, $q, $resource, Resu
   var self = this;
   this.delete = function(id) {
     var attributes = Helpers.splitId(id);
-    return Clients.delete({name: attributes[1], dc: attributes[0]}).$promise;
+    var name = Helpers.escapeDot(attributes[1]);
+
+    return Clients.delete({name: name, dc: attributes[0]}).$promise;
   };
   this.deleteCheckResult = function(id) {
     return Results.delete(id);
@@ -327,7 +335,7 @@ function(DefaultConfig, $filter, $resource, $rootScope) {
   };
   this.defaultTheme = function() {
     if (self.enterprise()) {
-      return 'sensu-enterprise';
+      return DefaultConfig.DefaultTheme || 'sensu-enterprise';
     }
     return DefaultConfig.DefaultTheme;
   };
@@ -350,8 +358,9 @@ function(DefaultConfig, $filter, $resource, $rootScope) {
   };
   this.logoURL = function() {
     if (self.enterprise()) {
-      return 'img/logo.png';
+      return DefaultConfig.LogoURL || 'img/logo.png';
     }
+
     return DefaultConfig.LogoURL;
   };
   this.refresh = function() {
@@ -409,7 +418,10 @@ function(Helpers, Notification, $q, $resource, $rootScope, Silenced) {
   this.resolve = function(id) {
     var attributes = Helpers.splitId(id);
     var variables = Helpers.splitId(attributes[1]);
-    return Events.delete({check: variables[1], client: variables[0], dc: attributes[0]}).$promise;
+    var check = Helpers.escapeDot(variables[1]);
+    var client = Helpers.escapeDot(variables[0]);
+
+    return Events.delete({check: check, client: client, dc: attributes[0]}).$promise;
   };
   this.resolveMultiple = function(filtered, selected) {
     return Helpers.deleteMultiple(self.resolve, filtered, selected)
@@ -482,7 +494,10 @@ function(Helpers, Notification, $q, $resource, $rootScope) {
   this.delete = function(id) {
     var attributes = Helpers.splitId(id);
     var variables = Helpers.splitId(attributes[1]);
-    return Results.delete({check: variables[1], client: variables[0], dc: attributes[0]})
+    var check = Helpers.escapeDot(variables[1]);
+    var client = Helpers.escapeDot(variables[0]);
+
+    return Results.delete({check: check, client: client, dc: attributes[0]})
     .$promise.then(
       function() {
         $rootScope.skipOneRefresh = true;
@@ -599,15 +614,44 @@ serviceModule.service('Silenced', ['Helpers', 'Notification', '$q', '$resource',
         payload.subscription = options.subscription;
       }
 
+      if (options.expireOnResolve === 'true') {
+        payload.expire_on_resolve = true; // jshint ignore:line
+      }
+
       if (options.expire === 'resolve') {
         payload.expire_on_resolve = true; // jshint ignore:line
         delete payload.expire;
+      }
+
+      if (options.start === 'custom') {
+        payload.begin = options.begin;
       }
 
       return self.post(payload);
     };
     this.clearEntries = function(entries) {
       var promises = [];
+
+      // Verify if removing the entries impact more than a single client
+      var impactsMultipleClients = false;
+      angular.forEach(entries, function(entry) {
+        var idParts = entry._id.split(':');
+        if (idParts[1] !== 'client') {
+          impactsMultipleClients = true;
+        }
+      });
+
+      // If we do impact more than 1 client, display the appropriate message in
+      // the confirmation prompt
+      if (impactsMultipleClients) {
+        var msg = 'Removing this silencing entry will impact multiple clients. Do you really want to remove it?';
+        if (entries.length > 1) {
+          msg = 'Removing these silencing entries will impact multiple clients. Do you really want to remove them?';
+        }
+        if (!window.confirm(msg)) {
+          return $q.reject();
+        }
+      }
 
       angular.forEach(entries, function(entry) {
         if (entry.selected) {
@@ -642,6 +686,15 @@ serviceModule.service('Silenced', ['Helpers', 'Notification', '$q', '$resource',
       return entry.$clear({action: 'clear'});
     };
     this.deleteSingle = function(id) {
+      // Verify if this silenced entry applies to multiple clients
+      var idParts = id.split(':');
+      // The first part will be the datacenter, then we have the subscription
+      if (idParts[1] !== 'client') {
+        if (!window.confirm('Removing this silencing entry will impact multiple clients. Do you really want to remove it?')) {
+          return $q.reject();
+        }
+      }
+
       return self.delete(id)
       .then(
         function() {
@@ -777,6 +830,11 @@ serviceModule.service('Silenced', ['Helpers', 'Notification', '$q', '$resource',
         delete options.expire;
       }
 
+      // Set the beginning timestamp as unix timestamp if provided
+      if (options.start === 'custom') {
+        options.begin = moment(options.begin).unix();
+      }
+
       return options;
     };
 }]);
@@ -837,12 +895,13 @@ serviceModule.service('Stashes', ['Helpers', 'Notification', '$q', '$resource', 
 /**
 * Subscriptions
 */
-serviceModule.service('Subscriptions', ['$resource',
-  function ($resource) {
+serviceModule.service('Subscriptions', ['Helpers', '$resource',
+  function (Helpers, $resource) {
     var Subscriptions = $resource('subscriptions/:subscription',
       {subscription: '@subscription'}
     );
     this.get = function(name) {
+      name = Helpers.escapeDot(name);
       return Subscriptions.get({subscription: name});
     };
     this.query = function() {

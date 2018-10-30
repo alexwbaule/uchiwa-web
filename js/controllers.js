@@ -160,9 +160,11 @@ controllerModule.controller('ChecksController', ['Checks', '$filter', 'Helpers',
     $scope.predicate = 'name';
     $scope.reverse = false;
     $scope.selected = {all: false, ids: {}};
+    $scope.types = {metric: 'Metric', standard: 'Standard'};
 
     var updateFilters = function() {
       var filtered = $filter('filter')($scope.checks, {dc: $scope.filters.dc}, Helpers.equals);
+      filtered = $filter('type')(filtered, $scope.filters.type);
       filtered = $filter('regex')(filtered, $scope.filters.q);
       filtered = $filter('collection')(filtered, 'checks');
       $scope.filtered = filtered;
@@ -186,14 +188,14 @@ controllerModule.controller('ChecksController', ['Checks', '$filter', 'Helpers',
     };
 
     // Filters
-    $scope.$watchGroup(['collection.search', 'filters.q', 'filters.dc'], function(newValues, oldValues) {
+    $scope.$watchGroup(['collection.search', 'filters.q', 'filters.dc', 'filters.type'], function(newValues, oldValues) {
       updateFilters();
       Helpers.updateSelected(newValues, oldValues, $scope.filtered, $scope.selected);
     });
 
     // Routing
     $scope.filters = {};
-    routingService.initFilters($routeParams, $scope.filters, ['dc', 'limit', 'q']);
+    routingService.initFilters($routeParams, $scope.filters, ['dc', 'limit', 'q', 'type']);
     $scope.$on('$locationChangeSuccess', function(){
       routingService.updateFilters($routeParams, $scope.filters);
     });
@@ -215,8 +217,8 @@ controllerModule.controller('ChecksController', ['Checks', '$filter', 'Helpers',
 /**
 * Client
 */
-controllerModule.controller('ClientController', ['Clients', '$filter', 'Helpers', '$location', '$rootScope', '$routeParams', 'routingService', '$scope', 'Sensu', 'Silenced', 'titleFactory', '$uibModal', 'User',
-  function (Clients, $filter, Helpers, $location, $rootScope, $routeParams, routingService, $scope, Sensu, Silenced, titleFactory, $uibModal, User) {
+controllerModule.controller('ClientController', ['Clients', 'Check', '$filter', 'Helpers', '$location', '$rootScope', '$routeParams', 'routingService', '$scope', 'Sensu', 'Silenced', 'titleFactory', '$uibModal', 'User',
+  function (Clients, Check, $filter, Helpers, $location, $rootScope, $routeParams, routingService, $scope, Sensu, Silenced, titleFactory, $uibModal, User) {
     $scope.predicate = '-last_status';
     $scope.reverse = false;
     $scope.check = null;
@@ -309,6 +311,10 @@ controllerModule.controller('ClientController', ['Clients', '$filter', 'Helpers'
     $scope.permalink = routingService.permalink;
     $scope.silence = Silenced.create;
     $scope.user = User;
+    $scope.issueCheckRequest = function(dc, name, clientname) {
+        var subscriber = ['client:'+clientname];
+        Check.issueCheckRequest(dc, name, subscriber);
+    };
   }
 ]);
 
@@ -447,8 +453,8 @@ controllerModule.controller('ClientsController', ['Clients', '$filter', 'Helpers
 
     var updateFilters = function() {
       var filtered = $filter('filter')($scope.clients, {dc: $scope.filters.dc}, Helpers.equals);
-      // filtered = $filter('filter')(filtered, {status: $scope.filters.status});
-      filtered = $filter('filterSubscriptions')(filtered, $scope.filters.subscription);
+      filtered = $filter('filter')(filtered, {status: $scope.filters.status});
+      filtered = $filter('subscriptions')(filtered, $scope.filters.subscription);
       filtered = $filter('regex')(filtered, $scope.filters.q);
       filtered = $filter('collection')(filtered, 'clients');
       $scope.filtered = filtered;
@@ -562,7 +568,7 @@ controllerModule.controller('EventsController', ['Clients', 'Events', '$filter',
 
     var updateFilters = function() {
       var filtered = $filter('filter')($scope.events, {dc: $scope.filters.dc}, Helpers.equals);
-      filtered = $filter('filter')(filtered, {check: {status: $scope.filters.status}});
+      filtered = $filter('status')(filtered, $scope.filters.status);
       filtered = $filter('hideSilenced')(filtered, $scope.filters.silenced);
       filtered = $filter('hideClientsSilenced')(filtered, $scope.filters.clientsSilenced);
       filtered = $filter('hideOccurrences')(filtered, $scope.filters.occurrences);
@@ -911,12 +917,15 @@ controllerModule.controller('SilencedModalController', ['Config', '$filter', 'it
     $scope.format = Config.dateFormat();
     $scope.options = {
       ac: {},
+      begin: moment().format($scope.format),
       check: '',
       client: '',
       datacenter: '',
       durationFormat: 'hours',
       expire: 'resolve',
+      expireOnResolve: 'false',
       reason: '',
+      start: 'now',
       subscription: '',
       to: moment().add(1, 'h').format($scope.format),
       what: '',
@@ -979,6 +988,17 @@ controllerModule.controller('SilencedModalController', ['Config', '$filter', 'it
       } else if ($scope.options.who === 'subscription' && (angular.isUndefined($scope.options.subscription) || $scope.options.subscription === '')) {
         Notification.error('Please enter which subscription should be silenced');
         return false;
+      }
+
+      // Verify the begin date
+      if ($scope.options.start === 'custom') {
+        if (angular.isUndefined($scope.options.begin) || $scope.options.begin === '') {
+          Notification.error('Please enter a beginning date');
+          return false;
+        } else if (moment($scope.options.begin).isBefore(moment())) {
+          Notification.error('Please enter a beginning date in the future');
+          return false;
+        }
       }
 
       // Verify the duration
